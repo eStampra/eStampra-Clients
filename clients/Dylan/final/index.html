@@ -10,27 +10,29 @@
         background: #ffffff;
         text-align: center;
     }
+
     h2 { margin-bottom: 20px; }
 
-    /* Outer box for preview only (NOT included in copy) */
-    #preview-box {
+    /* This wrapper is just for centering, NOT copied */
+    #display-wrapper {
         display: inline-block;
         text-align: left;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        background: #fff;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0;
     }
 
-    /* Inner box that holds ONLY the signature (this is what gets copied) */
+    /* THIS is the signature that will be copied */
+/* It must have zero borders/padding/background */
     #signature-inner {
+        background: transparent !important;
         border: none !important;
         padding: 0 !important;
         margin: 0 !important;
     }
 
-    /* Copy Button */
+    /* Button styling */
     #copyBtn {
         margin-top: 25px;
         background: #007BFF;
@@ -48,12 +50,14 @@
 <body>
 
 <h2>Your Final Email Signature</h2>
-<p>Preview your signature below. Click the button to copy it.</p>
+<p>Click the button to copy it cleanly into Gmail or Outlook.</p>
 
-<div id="preview-box">
-    <div id="signature-inner">Loading signature...</div>
+<!-- Signature display (not copied) -->
+<div id="display-wrapper">
+    <div id="signature-inner">Loading signature…</div>
 </div>
 
+<!-- Copy button -->
 <button id="copyBtn">Copy Signature</button>
 
 <script>
@@ -64,12 +68,12 @@ fetch("signature.html")
         document.getElementById("signature-inner").innerHTML = html;
     });
 
-// Copy ONLY the signature, not the preview box
+// Copy ONLY the signature-inner content
 document.getElementById("copyBtn").addEventListener("click", function () {
-    const sigInner = document.getElementById("signature-inner");
+    const sig = document.getElementById("signature-inner");
 
     const range = document.createRange();
-    range.selectNode(sigInner);
+    range.selectNode(sig);
 
     const sel = window.getSelection();
     sel.removeAllRanges();
