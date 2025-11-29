@@ -2,79 +2,57 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Preview - Email Signature</title>
+<title>Preview Only</title>
 <style>
     body {
         font-family: Arial, sans-serif;
-        padding: 40px;
-        background: #fafafa;
         text-align: center;
-    }
-
-    h2 { margin-bottom: 20px; }
-
-    /* Wrapper */
-    #watermark-wrapper {
-        position: relative;
-        display: inline-block;
+        background: #f9f9f9;
         padding: 40px;
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        overflow: hidden;
     }
 
-    /* WATERMARK IN FRONT OF IMAGE */
-    #watermark-wrapper::before {
-        content: "eStampra Preview • Do Not Use";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 200%;
-        height: 200%;
-        font-size: 48px;
-        color: rgba(0,0,0,0.08); /* slightly stronger so it’s visible */
-        letter-spacing: 2px;
-        transform: rotate(-35deg);
-        transform-origin: 0 0;
-        white-space: nowrap;
-        pointer-events: none;
-        user-select: none;
-        z-index: 5; /* WATERMARK ON TOP */
+    h1 {
+        margin-bottom: 10px;
     }
 
-    /* Signature display */
-    #signature-inner {
-        position: relative;
-        z-index: 1; /* IMAGE BELOW WATERMARK */
-        background: transparent;
+    #preview-box {
+        width: fit-content;
+        margin: 30px auto;
         padding: 0;
-        margin: 0;
+        position: relative;
+    }
+
+    #signature-img {
+        display: block;
+        max-width: 100%;
+        border-radius: 6px;
+    }
+
+    /* Watermark overlay */
+    .watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-25deg);
+        font-size: 60px;
+        color: rgba(255, 0, 0, 0.30);
+        font-weight: bold;
+        letter-spacing: 4px;
+        pointer-events: none;
+        white-space: nowrap;
+        z-index: 10;
     }
 </style>
 </head>
 <body>
 
-<h2>Preview Only</h2>
+<h1>Preview Only</h1>
 <p>This is a preview. Final version will be delivered without watermark.</p>
 
-<div id="watermark-wrapper">
-    <div id="signature-inner">Loading preview…</div>
+<div id="preview-box">
+    <div class="watermark">PREVIEW ONLY</div>
+    <img id="signature-img" src="preview.png" alt="Signature Preview">
 </div>
-
-<script>
-// Load preview image
-fetch("preview.png") // change to preview.jpg if needed
-    .then(res => res.blob())
-    .then(blob => {
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(blob);
-        img.style.maxWidth = "100%";
-        img.draggable = false;
-        document.getElementById("signature-inner").innerHTML = "";
-        document.getElementById("signature-inner").appendChild(img);
-    });
-</script>
 
 </body>
 </html>
