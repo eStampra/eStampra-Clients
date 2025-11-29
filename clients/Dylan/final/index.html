@@ -11,7 +11,9 @@
         text-align: center;
     }
     h2 { margin-bottom: 20px; }
-    #signature-container {
+
+    /* Outer box for preview only (NOT included in copy) */
+    #preview-box {
         display: inline-block;
         text-align: left;
         padding: 20px;
@@ -19,6 +21,13 @@
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
         background: #fff;
+    }
+
+    /* Inner box that holds ONLY the signature (this is what gets copied) */
+    #signature-inner {
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
     /* Copy Button */
@@ -41,25 +50,26 @@
 <h2>Your Final Email Signature</h2>
 <p>Preview your signature below. Click the button to copy it.</p>
 
-<div id="signature-container">Loading signature...</div>
+<div id="preview-box">
+    <div id="signature-inner">Loading signature...</div>
+</div>
 
 <button id="copyBtn">Copy Signature</button>
 
 <script>
-// Load the signature HTML
+// Load signature HTML into inner div
 fetch("signature.html")
     .then(response => response.text())
     .then(html => {
-        document.getElementById("signature-container").innerHTML = html;
+        document.getElementById("signature-inner").innerHTML = html;
     });
 
-// Copy rendered HTML signature
+// Copy ONLY the signature, not the preview box
 document.getElementById("copyBtn").addEventListener("click", function () {
-    const sigContainer = document.getElementById("signature-container");
+    const sigInner = document.getElementById("signature-inner");
 
-    // Create a temporary range + selection
     const range = document.createRange();
-    range.selectNode(sigContainer);
+    range.selectNode(sigInner);
 
     const sel = window.getSelection();
     sel.removeAllRanges();
@@ -73,8 +83,7 @@ document.getElementById("copyBtn").addEventListener("click", function () {
         this.innerText = "Copy Failed";
     }
 
-    // Clear selection visually (optional)
-    window.getSelection().removeAllRanges();
+    sel.removeAllRanges();
 });
 </script>
 
