@@ -29,6 +29,81 @@
             margin-right: 0.5rem;
             vertical-align: middle;
         }
+
+        /* Hero Background Image Styling */
+        .hero-background {
+            background-image: url('https://images.unsplash.com/photo-1517292211477-d46ed4d8e20f?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); /* Placeholder image, replace with a relevant one */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            z-index: 0;
+        }
+
+        /* Overlay to darken background image and make text pop */
+        .hero-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, rgba(28, 69, 167, 0.9) 0%, rgba(28, 69, 167, 0.7) 100%); /* Primary blue gradient */
+            z-index: -1;
+        }
+
+        /* Before/After image styling */
+        .signature-compare-container {
+            display: flex;
+            gap: 1rem; /* Space between images */
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .signature-image {
+            width: 100%; /* Default for small screens */
+            max-width: 300px; /* Max width for individual image */
+            height: auto;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+        .signature-image:hover {
+            transform: translateY(-5px);
+        }
+        .signature-label {
+            position: absolute;
+            bottom: 0.5rem;
+            left: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem; /* rounded-md */
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 600; /* font-semibold */
+            color: #1f2937; /* dark-text */
+        }
+        .signature-card {
+            position: relative;
+            background-color: white; /* Card background */
+            border-radius: 0.75rem;
+            padding: 1rem; /* Inner padding */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Arrow for visual comparison */
+        .compare-arrow {
+            font-size: 3rem;
+            color: #f59e0b; /* secondary-gold */
+            margin: 0 1rem;
+            display: none; /* Hidden by default, shown on md screens */
+        }
+        @media (min-width: 768px) {
+            .compare-arrow {
+                display: block;
+            }
+            .signature-image {
+                width: calc(50% - 0.5rem); /* Adjust width for desktop view */
+            }
+        }
     </style>
     <!-- Tailwind Configuration (Standard Script) -->
     <script>
@@ -225,23 +300,35 @@
             <nav class="space-x-4">
                 <a href="#features" class="text-dark-text hover:text-primary-blue transition duration-150">Features</a>
                 <a href="#impact" class="text-dark-text hover:text-primary-blue transition duration-150">Impact</a>
-                <a href="#reviews" class="text-dark-text hover:text-primary-blue transition duration-150">Reviews</a>
-                <a href="#pricing_details" class="text-dark-text hover:text-primary-blue transition duration-150">Tiers & Pricing</a>
+                <a href="#reviews" class="text-dark-text hover:text-primary-blue transition duration-150">Tiers & Pricing</a>
                 <a href="#contact" class="px-3 py-1 bg-secondary-gold text-dark-text font-semibold rounded-full hover:bg-secondary-gold/90 transition duration-150">Get a Quote</a>
             </nav>
         </div>
     </header>
 
     <main>
-        <!-- Hero Section -->
-        <section id="hero" class="py-20 sm:py-32 bg-primary-blue text-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h1 class="text-4xl sm:text-6xl font-extrabold leading-tight mb-4">
+        <!-- Hero Section (Updated with visual Before/After) -->
+        <section id="hero" class="hero-background py-20 sm:py-32 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <h1 class="text-4xl sm:text-6xl font-extrabold leading-tight mb-4 drop-shadow-lg">
                     Professional Email Sign-Offs for <span class="text-secondary-gold">UK Businesses</span>
                 </h1>
-                <p class="text-xl sm:text-2xl font-light mb-8 max-w-3xl mx-auto">
+                <p class="text-xl sm:text-2xl font-light mb-8 max-w-3xl mx-auto drop-shadow-md">
                     Elevate your brand with a modern, HTML-coded email signature that looks perfect on every device.
                 </p>
+                <div class="signature-compare-container mb-12">
+                    <div class="signature-card">
+                        <!-- REPLACE THIS URL WITH YOUR 'BEFORE' IMAGE (PNG or JPEG) -->
+                        <img src="https://placehold.co/300x200/ef4444/ffffff?text=REPLACE_WITH_BEFORE_PNG_OR_JPEG_URL" alt="Before: Messy email signature" class="signature-image">
+                        <span class="signature-label">Before</span>
+                    </div>
+                    <span class="compare-arrow md:block hidden">&rarr;</span>
+                    <div class="signature-card">
+                        <!-- REPLACE THIS URL WITH YOUR 'AFTER' IMAGE (PNG or JPEG) -->
+                        <img src="https://placehold.co/300x200/10b981/ffffff?text=REPLACE_WITH_AFTER_PNG_OR_JPEG_URL" alt="After: Professional email signature" class="signature-image">
+                        <span class="signature-label">After</span>
+                    </div>
+                </div>
                 <a href="#pricing_details" class="inline-block px-8 py-4 bg-secondary-gold text-dark-text text-lg font-bold rounded-xl shadow-lg hover:bg-secondary-gold/90 transition duration-300 transform hover:scale-[1.02]">
                     View Our Service Tiers
                 </a>
@@ -424,7 +511,7 @@
                         <a href="#contact" class="mt-8 w-full block text-center px-6 py-3 bg-primary-blue text-white font-bold rounded-xl hover:bg-primary-blue/90 transition duration-300 shadow-md">Select Standard Tier</a>
                     </div>
                    
-                    <!-- Tier 3: Premium (£299) - Price Increased -->
+                    <!-- Tier 3: Premium (£299) -->
                     <div class="bg-white p-8 rounded-2xl shadow-xl border-4 border-gray-200 flex flex-col transform hover:scale-[1.01] transition duration-300">
                         <h3 class="text-2xl font-extrabold text-primary-blue mb-2">Premium</h3>
                         <p class="text-5xl font-extrabold text-primary-blue mb-4">£299<span class="text-lg text-gray-500 font-medium ml-1">/ Signature</span></p>
