@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Your Email Signature</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 40px;
+        background: #ffffff;
+        text-align: center;
+    }
+
+    h2 { margin-bottom: 20px; }
+
+    /* This wrapper is just for centering, NOT copied */
+    #display-wrapper {
+        display: inline-block;
+        text-align: left;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0;
+    }
+
+    /* THIS is the signature that will be copied */
+/* It must have zero borders/padding/background */
+    #signature-inner {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Button styling */
+    #copyBtn {
+        margin-top: 25px;
+        background: #007BFF;
+        color: white;
+        border: none;
+        padding: 12px 22px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    #copyBtn:hover { background: #0056cc; }
+</style>
+</head>
+<body>
+
+<h2>Your Final Email Signature</h2>
+<p>Click the button to copy it cleanly into Gmail or Outlook.</p>
+
+<!-- Signature display (not copied) -->
+<div id="display-wrapper">
+    <div id="signature-inner">Loading signature…</div>
+</div>
+
+<!-- Copy button -->
+<button id="copyBtn">Copy Signature</button>
+
+<script>
+// Load signature HTML into inner div
+fetch("signature.html")
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById("signature-inner").innerHTML = html;
+    });
+
+// Copy ONLY the signature-inner content
+document.getElementById("copyBtn").addEventListener("click", function () {
+    const sig = document.getElementById("signature-inner");
+
+    const range = document.createRange();
+    range.selectNode(sig);
+
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    try {
+        document.execCommand("copy");
+        this.innerText = "Copied!";
+        setTimeout(() => this.innerText = "Copy Signature", 2000);
+    } catch (err) {
+        this.innerText = "Copy Failed";
+    }
+
+    sel.removeAllRanges();
+});
+</script>
+
+</body>
+</html>
+
