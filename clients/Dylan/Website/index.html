@@ -129,18 +129,7 @@
         }
     </script>
    
-    <!-- Firebase SDK Imports and Application Logic (Module Script) --><script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, addDoc, collection, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        setLogLevel('Debug');
-
-        let db, auth, userId;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
+    <!-- Form Handling Script (Updated for Netlify) --><script>
         function setupPriceSelection() {
             const priceLabels = document.querySelectorAll('.service-tier-label');
            
@@ -173,14 +162,13 @@
             });
         }
 
-
         async function validateAndSubmit(event) {
             event.preventDefault();
 
             const form = event.target;
             const businessName = document.getElementById('business_name').value.trim();
             const email = document.getElementById('email').value.trim();
-            const phone = document.getElementById('phone').value.trim(); // Optional field
+            const phone = document.getElementById('phone').value.trim();
             const selectedTier = document.querySelector('input[name="service_tier"]:checked');
             const message = document.getElementById('message').value.trim();
 
@@ -204,29 +192,21 @@
             submitButton.classList.add('opacity-50');
 
             try {
-                // Ensure Firebase is ready before proceeding
-                if (!db || !auth.currentUser) {
-                    console.warn("Database not ready, attempting to wait for auth...");
-                    // A simple delay if auth is still processing
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    if (!auth.currentUser) throw new Error("Authentication failed or not complete.");
+                // Create form data for Netlify
+                const formData = new FormData(form);
+                
+                // Netlify form submission using fetch
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(formData).toString()
+                });
+
+                if (!response.ok) {
+                    throw new Error('Form submission failed');
                 }
 
-                const formData = {
-                    business_name: businessName,
-                    email: email,
-                    phone: phone || 'N/A', // Save as N/A if left blank
-                    service_tier: selectedTier.value,
-                    message: message || 'No additional message provided.',
-                    timestamp: serverTimestamp(),
-                    status: 'New Request'
-                };
-
-                // Store in a public collection under the app ID
-                const quotesRef = collection(db, 'artifacts', appId, 'public', 'data', 'quote_requests');
-                await addDoc(quotesRef, formData);
-
-                console.log("Quote request successfully submitted to Firestore.");
+                console.log("Form successfully submitted to Netlify.");
 
                 // On success: redirect to success page
                 const successMessage = document.getElementById('success-message');
@@ -235,11 +215,11 @@
                 successMessage.classList.remove('hidden');
 
             } catch (error) {
-                console.error("Error saving quote request to Firestore:", error);
+                console.error("Error submitting form to Netlify:", error);
                
                 // On error: Restore button state and show error message
                 errorMessage.textContent = 'An error occurred while submitting your request. Please try again.';
-                errorMessage.classList.remove('hidden'); // Show error message
+                errorMessage.classList.remove('hidden');
                
                 document.getElementById('button-text').classList.remove('hidden');
                
@@ -254,34 +234,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (Object.keys(firebaseConfig).length) {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-               
-                // Auth initialization
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        console.log("User authenticated. User ID:", userId);
-                    } else {
-                        try {
-                            if (initialAuthToken) {
-                                // Corrected variable usage here as well for safety
-                                await signInWithCustomToken(auth, initialAuthToken);
-                            } else {
-                                await signInAnonymously(auth);
-                            }
-                            userId = auth.currentUser?.uid || crypto.randomUUID();
-                        } catch (error) {
-                            console.error("Authentication failed:", error);
-                        }
-                    }
-                });
-            } else {
-                console.error("Firebase config is missing. Data persistence will not work.");
-            }
-
             const quoteForm = document.getElementById('quote-form');
             if (quoteForm) {
                 quoteForm.addEventListener('submit', validateAndSubmit);
@@ -291,6 +243,7 @@
             setupPriceSelection();
         });
     </script>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
 </head>
 <body class="antialiased">
 
@@ -552,23 +505,55 @@
                         <p>Thank you! We will review your request shortly and get back to you via email.</p>
                     </div>
 
-                    <form id="quote-form" class="space-y-6" onsubmit="return false;">
+                    <!-- NETLIFY FORM - Updated with required attributes -->
+                    <form 
+                        id="quote-form" 
+                        name="quote-request" 
+                        method="POST" 
+                        data-netlify="true"
+                        data-netlify-honeypot="bot-field"
+                        class="space-y-6"                     
+                    >
+                        <!-- Hidden field for Netlify bot detection -->
+                        <input type="hidden" name="form-name" value="quote-request" />
+                        <input type="hidden" name="bot-field" />
+                        
                         <div id="form-inputs">
                             <!-- Input Fields -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="business_name" class="block text-sm font-medium text-gray-700 mb-1">Business Name <span class="text-red-500">*</span></label>
-                                    <input type="text" id="business_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150" placeholder="e.g., London Plumbing Co.">
+                                    <input 
+                                        type="text" 
+                                        id="business_name" 
+                                        name="business_name"
+                                        required 
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150" 
+                                        placeholder="e.g., London Plumbing Co."
+                                    >
                                 </div>
                                 <div>
                                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Business Email <span class="text-red-500">*</span></label>
-                                    <input type="email" id="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150" placeholder="yourname@yourbusiness.co.uk">
+                                    <input 
+                                        type="email" 
+                                        id="email" 
+                                        name="email"
+                                        required 
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150" 
+                                        placeholder="yourname@yourbusiness.co.uk"
+                                    >
                                 </div>
                             </div>
 
                             <div>
                                 <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number (Optional)</label>
-                                <input type="tel" id="phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150" placeholder="020 7946 0000">
+                                <input 
+                                    type="tel" 
+                                    id="phone" 
+                                    name="phone"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150" 
+                                    placeholder="020 7946 0000"
+                                >
                             </div>
 
                             <!-- Service Tier Selection (Required) -->
@@ -576,16 +561,37 @@
                                 <span class="block text-sm font-medium text-gray-700 mb-2">Select Service Tier <span class="text-red-500">*</span></span>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     <label class="service-tier-label flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer shadow-sm transition duration-300 hover:border-primary-blue/50">
-                                        <input type="radio" name="service_tier" id="tier_basic" value="Basic" required class="form-radio h-4 w-4 text-secondary-gold focus:ring-secondary-gold">
+                                        <input 
+                                            type="radio" 
+                                            name="service_tier" 
+                                            id="tier_basic" 
+                                            value="Basic" 
+                                            required 
+                                            class="form-radio h-4 w-4 text-secondary-gold focus:ring-secondary-gold"
+                                        >
                                         <span class="ml-3 font-semibold text-dark-text">Basic (£99)</span>
                                     </label>
                                     <label class="service-tier-label flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer shadow-sm transition duration-300 hover:border-primary-blue/50">
-                                        <input type="radio" name="service_tier" id="tier_standard" value="Standard" required checked class="form-radio h-4 w-4 text-primary-blue focus:ring-primary-blue">
+                                        <input 
+                                            type="radio" 
+                                            name="service_tier" 
+                                            id="tier_standard" 
+                                            value="Standard" 
+                                            required 
+                                            checked 
+                                            class="form-radio h-4 w-4 text-primary-blue focus:ring-primary-blue"
+                                        >
                                         <span class="ml-3 font-semibold text-dark-text">Standard (£149)</span>
                                     </label>
                                     <label class="service-tier-label flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer shadow-sm transition duration-300 hover:border-primary-blue/50">
-                                        <input type="radio" name="service_tier" id="tier_premium" value="Premium" required class="form-radio h-4 w-4 text-dark-text focus:ring-dark-text">
-                                        <!-- PRICE UPDATED TO £299 IN FORM -->
+                                        <input 
+                                            type="radio" 
+                                            name="service_tier" 
+                                            id="tier_premium" 
+                                            value="Premium" 
+                                            required 
+                                            class="form-radio h-4 w-4 text-dark-text focus:ring-dark-text"
+                                        >
                                         <span class="ml-3 font-semibold text-dark-text">Premium (£299)</span>
                                     </label>
                                 </div>
@@ -594,7 +600,13 @@
                             <!-- Message Field -->
                             <div>
                                 <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Additional Message / Requirements (Optional)</label>
-                                <textarea id="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150" placeholder="Tell us about your company or any specific needs..."></textarea>
+                                <textarea 
+                                    id="message" 
+                                    name="message"
+                                    rows="4" 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150" 
+                                    placeholder="Tell us about your company or any specific needs..."
+                                ></textarea>
                             </div>
 
                             <!-- Error Message -->
