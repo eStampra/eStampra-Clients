@@ -13,7 +13,7 @@
 
     h2 { margin-bottom: 20px; }
 
-    /* Watermark background */
+    /* Wrapper */
     #watermark-wrapper {
         position: relative;
         display: inline-block;
@@ -24,7 +24,7 @@
         overflow: hidden;
     }
 
-    /* The watermark layer */
+    /* WATERMARK IN FRONT OF IMAGE */
     #watermark-wrapper::before {
         content: "eStampra Preview • Do Not Use";
         position: absolute;
@@ -33,22 +33,23 @@
         width: 200%;
         height: 200%;
         font-size: 48px;
-        color: rgba(0,0,0,0.06);
+        color: rgba(0,0,0,0.08); /* slightly stronger so it’s visible */
         letter-spacing: 2px;
         transform: rotate(-35deg);
         transform-origin: 0 0;
         white-space: nowrap;
         pointer-events: none;
         user-select: none;
+        z-index: 5; /* WATERMARK ON TOP */
     }
 
-    /* Signature container */
+    /* Signature display */
     #signature-inner {
         position: relative;
-        z-index: 2; /* sits ABOVE the watermark */
+        z-index: 1; /* IMAGE BELOW WATERMARK */
         background: transparent;
         padding: 0;
-        border: none;
+        margin: 0;
     }
 </style>
 </head>
@@ -62,13 +63,14 @@
 </div>
 
 <script>
-// Load preview signature (usually an image)
-fetch("preview.png") // change if you use JPG or GIF
+// Load preview image
+fetch("preview.png") // change to preview.jpg if needed
     .then(res => res.blob())
     .then(blob => {
         const img = document.createElement("img");
         img.src = URL.createObjectURL(blob);
         img.style.maxWidth = "100%";
+        img.draggable = false;
         document.getElementById("signature-inner").innerHTML = "";
         document.getElementById("signature-inner").appendChild(img);
     });
