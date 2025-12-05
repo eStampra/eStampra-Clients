@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Preview Only</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: #f9f9f9;
+        padding: 40px;
+    }
+
+    h1 {
+        margin-bottom: 10px;
+    }
+
+    #preview-box {
+        width: fit-content;
+        margin: 30px auto;
+        padding: 0;
+        position: relative;
+    }
+
+    #signature-img {
+        display: block;
+        max-width: 100%;
+        border-radius: 6px;
+    }
+
+    /* Watermark overlay */
+    .watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-25deg);
+        font-size: 60px;
+        color: rgba(255, 0, 0, 0.30);
+        font-weight: bold;
+        letter-spacing: 4px;
+        pointer-events: none;
+        white-space: nowrap;
+        z-index: 10;
+    }
+</style>
+</head>
+<body>
+
+<h1>Preview Only</h1>
+<p>This is a preview. Final version will be delivered without watermark.</p>
+
+<div id="preview-box">
+    <div class="watermark">PREVIEW ONLY</div>
+    <img id="signature-img" src="preview.png" alt="Signature Preview">
+</div>
+
+</body>
+</html>
+
